@@ -1,5 +1,7 @@
 <?php
 // Module: Classic Editor (OOP)
+/** @var TYPE_NAME $GLOBALS */
+$GLOBALS['marketing_planet_module_titles']['classic-editor'] = 'Enable Classic Editor';
 
 defined('ABSPATH') || exit;
 

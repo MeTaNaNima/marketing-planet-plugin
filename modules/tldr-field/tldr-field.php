@@ -1,6 +1,8 @@
 <?php
 
 defined('ABSPATH') || exit;
+/** @var TYPE_NAME $GLOBALS */
+$GLOBALS['marketing_planet_module_titles']['tldr-field'] = 'TL;DR Field (Prepends to First H2 Tag)';
 
 class MP_TLDR_Field {
     public function __construct() {
@@ -11,6 +13,9 @@ class MP_TLDR_Field {
 
     }
 
+    /**
+     * @return void
+     */
     public function register_meta_box(): void
     {
         $post_types = get_option('marketing_planet_tldr_post_types', ['post']);
@@ -19,6 +24,10 @@ class MP_TLDR_Field {
         }
     }
 
+    /**
+     * @param $post
+     * @return void
+     */
     public function render_meta_box($post): void
     {
         $value = get_post_meta($post->ID, '_marketing_planet_tldr', true);

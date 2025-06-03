@@ -78,10 +78,13 @@ function marketing_planet_settings_page(): void
     echo '<div class="tab-section" id="tab-modules">';
 
     echo '<h2>Enable Modules</h2><table class="form-table"><tbody>';
+
+    $module_titles = $GLOBALS['marketing_planet_module_titles'] ?? [];
     foreach ($module_folders as $folder) {
         $slug = basename($folder);
+        $label = $module_titles[$slug] ?? ucwords(str_replace(['-', '_'], ' ', $slug));
         $checked = in_array($slug, $active_modules) ? 'checked' : '';
-        echo "<tr><th scope='row'>{$slug}</th><td>";
+        echo "<tr><th scope='row'>{$label}</th><td>";
         echo "<label><input type='checkbox' name='marketing_planet_active_modules[]' value='{$slug}' {$checked}> Enable</label>";
         echo "</td></tr>";
     }
@@ -90,24 +93,26 @@ function marketing_planet_settings_page(): void
     // TL;DR field settings
     $tldr_visible = in_array('tldr-field', $active_modules);
     $style = $tldr_visible ? '' : 'style="display:none;"';
+    echo "<div class='' id='tldr-post-types'>";
     echo '<h2>TL;DR Field — Select Post Types</h2>';
     echo '<p>Select which post types should include the TL;DR summary field.</p>';
-    echo "<table class='form-table'><tr id='tldr-post-types' {$style}><th scope='row'>Post Types</th><td>";
-    echo '<select name="marketing_planet_tldr_post_types[]" multiple size="5" style="min-width:250px;">';
+    echo "<table class='form-table'><tr id='' {$style}><th scope='row'>Post Types</th><td>";
+    echo '<select name="marketing_planet_tldr_post_types[]" multiple size="3" style="min-width:250px;">';
     foreach ($post_types as $type) {
         $selected = (in_array($type->name, $tldr_enabled_post_types) || (empty($tldr_enabled_post_types) && $type->name === 'post')) ? 'selected' : '';
         echo "<option value='{$type->name}' {$selected}>{$type->label}</option>";
     }
-    echo '</select></td></tr></table>';
+    echo '</select></td></tr></table></div>';
 
     // FAQ Repeater field settings
     $faq_visible = in_array('faq-repeater', $active_modules);
     $faq_style = $faq_visible ? '' : 'style="display:none;"';
     $faq_enabled_post_types = (array) get_option('marketing_planet_faq_post_types', []);
+    echo "<div class='' id='faq-post-types'>";
     echo '<h2>FAQ Repeater — Select Post Types</h2>';
     echo '<p>Select which post types should include the FAQ repeater field.</p>';
-    echo "<table class='form-table'><tr id='faq-post-types' {$faq_style}><th scope='row'>Post Types</th><td>";
-    echo '<select name="marketing_planet_faq_post_types[]" multiple size="5" style="min-width:250px;">';
+    echo "<table class='form-table'><tr id='' {$faq_style}><th scope='row'>Post Types</th><td>";
+    echo '<select name="marketing_planet_faq_post_types[]" multiple size="3" style="min-width:250px;">';
     foreach ($post_types as $type) {
         $selected = in_array($type->name, $faq_enabled_post_types) ? 'selected' : '';
         echo "<option value='{$type->name}' {$selected}>{$type->label}</option>";
@@ -122,7 +127,7 @@ function marketing_planet_settings_page(): void
 
     echo '<tr><th scope="row">Manual Usage</th><td>';
     echo '<code>[mp_faqs]</code> — You can place this anywhere inside post content to manually show the FAQs.';
-    echo '</td></tr>';
+    echo '</td></tr></div>';
 
 
 

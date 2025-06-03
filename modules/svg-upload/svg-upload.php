@@ -2,6 +2,8 @@
 // Module: SVG Upload Support (OOP)
 
 defined('ABSPATH') || exit;
+/** @var TYPE_NAME $GLOBALS */
+$GLOBALS['marketing_planet_module_titles']['svg-upload'] = 'Allow SVG Uploads';
 
 class MP_SVG_Upload {
     public function __construct() {

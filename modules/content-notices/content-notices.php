@@ -1,5 +1,7 @@
 <?php
 // Module: Content Notices (OOP)
+/** @var TYPE_NAME $GLOBALS */
+$GLOBALS['marketing_planet_module_titles']['content-notices'] = 'Content Notices Shortcode (Classic Editor Only)';
 
 defined('ABSPATH') || exit;
 
@@ -11,7 +13,7 @@ class MP_Content_Notices {
     }
 
     /**
-     * Render the [notice type="..."] shortcode.
+     * Render the [notice type="{TYPES: INFO, SUCCESS, WARNING, DANGER}"] shortcode.
      */
     public function render_notice_shortcode($atts, $content = ''): string
     {

@@ -1,6 +1,10 @@
 <?php
 namespace MP\Modules\FaqRepeater;
 
+
+/** @var TYPE_NAME $GLOBALS */
+$GLOBALS['marketing_planet_module_titles']['faq-repeater'] = 'FAQ Repeater';
+
 defined('ABSPATH') || exit;
 
 class FaqRepeaterModule {
@@ -8,6 +12,9 @@ class FaqRepeaterModule {
     private bool $faq_shortcode_used = false;
 
 
+    /**
+     *
+     */
     public function __construct() {
         add_action('add_meta_boxes', [$this, 'register_metabox']);
         add_action('save_post', [$this, 'save_faq_data']);
@@ -19,19 +26,29 @@ class FaqRepeaterModule {
 
     }
 
-    public function register_metabox() {
+    /**
+     * @return void
+     */
+    public function register_metabox(): void
+    {
         $enabled_post_types = get_option(self::OPTION_KEY, []);
         foreach ($enabled_post_types as $type) {
             add_meta_box('faq_repeater_box', 'FAQs', [$this, 'render_metabox'], $type, 'normal', 'default');
         }
     }
 
-    public function render_metabox($post) {
+    public function render_metabox($post): void
+    {
         $faqs = get_post_meta($post->ID, '_faq_repeater_data', true) ?: [];
         include __DIR__ . '/view-metabox.php';
     }
 
-    public function save_faq_data($post_id) {
+    /**
+     * @param $post_id
+     * @return void
+     */
+    public function save_faq_data($post_id): void
+    {
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
 
         if (!empty($_POST['faq_repeater'])) {
@@ -44,7 +61,11 @@ class FaqRepeaterModule {
         }
     }
 
-    public function render_schema() {
+    /**
+     * @return void
+     */
+    public function render_schema(): void
+    {
         if (!is_singular()) return;
         $post_id = get_the_ID();
         $faqs = get_post_meta($post_id, '_faq_repeater_data', true);
@@ -69,6 +90,10 @@ class FaqRepeaterModule {
         echo '<script type="application/ld+json">' . wp_json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>';
     }
 
+    /**
+     * @param $atts
+     * @return string
+     */
     public function render_shortcode($atts): string {
         $this->faq_shortcode_used = true;
         if (!is_singular()) return '';
@@ -94,6 +119,9 @@ class FaqRepeaterModule {
         return ob_get_clean();
     }
 
+    /**
+     * @return void
+     */
     public function enqueue_assets(): void
     {
         $should_enqueue = $this->faq_shortcode_used || get_option('marketing_planet_faq_auto_append');
@@ -120,7 +148,12 @@ class FaqRepeaterModule {
     }
 
 
-    public function append_faq_to_content($content) {
+    /**
+     * @param $content
+     * @return mixed
+     */
+    public function append_faq_to_content($content): mixed
+    {
         if (!is_singular() || !in_the_loop() || !is_main_query()) return $content;
 
         // Only append if setting is enabled
