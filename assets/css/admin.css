@@ -1,0 +1,40 @@
+
+.text-left {
+    text-align: left !important;
+}
+
+.mp-input-container {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+
+    & .mp-input-container-inner {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        min-height: 30px;
+        text-align: center;
+    }
+}
+
+
+
+.mp-box {
+    display: flex;
+    flex-direction: row;
+    gap: 3rem;
+    align-items: center;
+}
+
+.mp-standard-box {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    & .mp-input-box {
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: center;
+        gap: 0.25rem;
+    }
+}

@@ -1,0 +1,24 @@
+.tldr-summary {
+    padding: var(--mp-padding);
+    margin: var(--mp-margin);
+    border-width: var(--mp-border_width);
+    background: var(--mp-background);
+    font-size: var(--mp-font-size);
+    font-weight: var(--mp-font-weight);
+    color: var(--mp-text_color);
+    border-color: var(--mp-border_color);
+    border-style: solid;
+}
+
+@media (max-width: 768px) {
+    .tldr-summary {
+        padding: var(--mp-padding-mobile);
+        margin: var(--mp-margin-mobile);
+        border-width: var(--mp-border_width-mobile);
+        background: var(--mp-background-mobile);
+        font-size: var(--mp-font-size-mobile);
+        font-weight: var(--mp-font-weight-mobile);
+        color: var(--mp-text_color-mobile);
+        border-color: var(--mp-border_color-mobile);
+    }
+}
