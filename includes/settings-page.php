@@ -152,6 +152,7 @@ function marketing_planet_settings_page(): void
     // 🔹 Tab: About Plugin
     echo '<div class="tab-section" id="tab-about-plugin" style="display:none;">';
     echo '<p><strong>Marketing Planet Plugin</strong> is a modular toolset for reusable functionality, SEO, content enhancements, and more — built for performance-oriented WordPress development.</p>';
+    echo "<p>Developed by <a href='https://marketingplanet.agency/' target='_blank'>Marketing Planet Agency</a></p>";
     echo '</div>';
 
     // 🔹 Tab: About Us
