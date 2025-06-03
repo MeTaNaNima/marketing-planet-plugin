@@ -1,0 +1,30 @@
+/*
+#8b0dbb
+ */
+.mp-faq-wrapper {
+   margin-top: 1em;
+}
+.mp-faq-item {
+   margin-bottom: 1em;
+   border-bottom: 1px solid #ddd;
+}
+.mp-faq-question {
+   background: none;
+   border: none;
+   font-size: 1.1em;
+   font-weight: bold;
+   cursor: pointer;
+   width: 100%;
+   text-align: left;
+   padding: 0.5rem 0.75rem;
+}
+.mp-faq-question:is(:hover, :focus, .active) {
+   background-color: #8b0dbb;
+   color: #fff;
+}
+.mp-faq-answer {
+   overflow: hidden;
+   max-height: 0;
+   transition: max-height 0.3s ease;
+   margin: 1.5rem 1rem 0.5rem;
+}

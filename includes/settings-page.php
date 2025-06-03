@@ -22,7 +22,6 @@ add_action('admin_menu', function () {
 add_action('admin_init', function () {
     register_setting('marketing_planet_settings_group', 'marketing_planet_active_modules');
     register_setting('marketing_planet_settings_group', 'marketing_planet_tldr_post_types');
-
     register_setting('marketing_planet_settings_group', 'marketing_planet_styles_tldr');
     add_action('update_option_marketing_planet_styles_tldr', function ($old, $new) {
         $css = mp_generate_tldr_css_vars($new);
@@ -39,6 +38,8 @@ add_action('admin_init', function () {
     }, 10, 2);
 
     register_setting('marketing_planet_settings_group', 'marketing_planet_faq_post_types');
+    register_setting('marketing_planet_settings_group', 'marketing_planet_faq_auto_append');
+
 
 
 
@@ -112,6 +113,18 @@ function marketing_planet_settings_page(): void
         echo "<option value='{$type->name}' {$selected}>{$type->label}</option>";
     }
     echo '</select></td></tr></table>';
+
+    $faq_auto_append = get_option('marketing_planet_faq_auto_append', false);
+    $checked = $faq_auto_append ? 'checked' : '';
+    echo '<tr><th scope="row">Auto-Append to Content</th><td>';
+    echo "<label><input type='checkbox' name='marketing_planet_faq_auto_append' value='1' {$checked}> Automatically append FAQ after post content</label>";
+    echo '</td></tr>';
+
+    echo '<tr><th scope="row">Manual Usage</th><td>';
+    echo '<code>[mp_faqs]</code> — You can place this anywhere inside post content to manually show the FAQs.';
+    echo '</td></tr>';
+
+
 
 
 
