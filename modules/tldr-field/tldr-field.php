@@ -54,10 +54,10 @@ class MP_TLDR_Field {
 
         if (preg_match('/<h2.*?>/', $content, $matches, PREG_OFFSET_CAPTURE)) {
             $pos = $matches[0][1];
-            return substr($content, 0, $pos) . '<div class="tldr-summary">' . wpautop($tldr) . '</div>' . substr($content, $pos);
+            return substr($content, 0, $pos) . '<section class="tldr-summary" role="complementary" aria-label="Summary"><h2>' . esc_attr(get_option('marketing_planet_tldr_section_title', 'Here is the Quick Answer:')) . '</h2>' . wpautop($tldr) . '</section>' . substr($content, $pos);
         }
 
-        return $content . '<div class="tldr-summary">' . wpautop($tldr) . '</div>';
+        return $content . '<section class="tldr-summary" role="complementary" aria-label="Summary"><h2>' . esc_attr(get_option('marketing_planet_tldr_section_title', 'Here is the Quick Answer:')) . '</h2>' . wpautop($tldr) . '</section>';
     }
 
     public function enqueue_styles(): void
