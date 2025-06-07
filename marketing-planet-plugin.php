@@ -14,8 +14,24 @@
 
 defined('ABSPATH') || exit;
 
+// Auto Update:
+require_once __DIR__ . '/vendor/autoload.php';
+use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
+
+$updateChecker = PucFactory::buildUpdateChecker(
+    'https://github.com/yourusername/your-repo-name/',
+    __FILE__,
+    'your-plugin-slug'
+);
+
+// Optional: For private repo authentication
+$updateChecker->setAuthentication('your-github-token');
+
+// Optional: Set the branch
+$updateChecker->getVcsApi()->setBranch('main');  // or 'master'
+
+
 // Include core includes
-//require_once plugin_dir_path(__FILE__) . 'includes/helpers.php';
 require_once plugin_dir_path(__FILE__) . 'includes/init.php';
 
 
@@ -47,3 +63,14 @@ add_action('admin_enqueue_scripts', function () {
         );
     }
 });
+
+add_action('wp_enqueue_scripts', function () {
+    $upload_dir = wp_upload_dir();
+    $custom_css_path = trailingslashit($upload_dir['basedir']) . 'marketing-planet/mp-front.css';
+    $custom_css_url  = trailingslashit($upload_dir['baseurl']) . 'marketing-planet/mp-front.css';
+
+    if (file_exists($custom_css_path)) {
+        wp_enqueue_style('marketing-planet-custom-css', $custom_css_url, [], filemtime($custom_css_path));
+    }
+});
+

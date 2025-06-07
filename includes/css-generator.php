@@ -6,8 +6,11 @@ function mp_generate_tldr_css_vars(array $styles = []): string {
         'padding'       => ['type' => 'box', 'unit' => 'rem'],
         'margin'        => ['type' => 'box', 'unit' => 'rem'],
         'border_width'  => ['type' => 'box', 'unit' => 'px'],
+        'border_radius' => ['type' => 'box', 'unit' => 'rem'],
+        'title_size'    => ['type' => 'font_size'],
         'font_size'     => ['type' => 'font_size'],
         'font_weight'   => ['type' => 'font_weight'],
+        'title_color'   => ['type' => 'color'],
         'text_color'    => ['type' => 'color'],
         'border_color'  => ['type' => 'color'],
         'background'    => ['type' => 'color'],
@@ -35,8 +38,8 @@ function mp_generate_tldr_css_vars(array $styles = []): string {
                 break;
 
             case 'font_size':
-                $desktop_vars[] = "--mp-font-size: " . mp_resolve_font_size($desktop) . ';';
-                $mobile_vars[]  = "--mp-font-size-mobile: " . mp_resolve_font_size($mobile) . ';';
+                $desktop_vars[] = "--mp-{$key}: " . mp_resolve_font_size($desktop) . ';';
+                $mobile_vars[]  = "--mp-{$key}-mobile: " . mp_resolve_font_size($mobile) . ';';
                 break;
 
             case 'font_weight':

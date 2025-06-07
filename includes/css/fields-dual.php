@@ -32,7 +32,7 @@ function mp_render_box_field_dual($option_name, $key, $label, $data = [], $defau
 
     foreach (['top', 'right', 'bottom', 'left'] as $side) {
         echo "<div class='mp-input-container-inner'>";
-            echo "" . ucfirst($side) . "";
+            echo ucfirst($side);
             foreach ($devices as $device => $label) {
                 $val = esc_attr($data[$device]['sides'][$side] ?? '');
                 echo "<input type='number' step='any' name='{$option_name}[{$key}][{$device}][sides][{$side}]' value='{$val}' style='width:80px;' />";
