@@ -21,6 +21,7 @@ class UpdateChecker {
         if (file_exists(dirname($this->pluginFile) . '/.env')) {
             $dotenv = Dotenv::createImmutable(dirname($this->pluginFile));
             $dotenv->load();
+            error_log('GITHUB_TOKEN = ' . getenv('GITHUB_TOKEN'));
         }
 
         $updateChecker = PucFactory::buildUpdateChecker(
@@ -32,8 +33,11 @@ class UpdateChecker {
         if ($token = getenv('GITHUB_TOKEN')) {
             $updateChecker->setAuthentication($token);
         }
+        
 
-        $updateChecker->setBranch('main');
+//        $updateChecker->setBranch('main');
+        $updateChecker->getVcsApi()->enableReleaseAssets();
+
 
         // Debug:
         $updateChecker->addResultFilter(function($update) {
