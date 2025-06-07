@@ -4,7 +4,7 @@
  * Plugin Name: Marketing Planet Plugin
  * Plugin URI: https://marketingplanet.agency/
  * Description: A modular plugin developed by Marketing Planet for reusable, high-performance functionality across multiple sites.
- * Version: 0.0.4
+ * Version: 0.0.5
  * Author: Marketing Planet
  * Author URI: https://marketingplanet.agency/
  * License: GPL2+
@@ -16,19 +16,12 @@ defined('ABSPATH') || exit;
 
 // Auto Update:
 require_once __DIR__ . '/vendor/autoload.php';
-use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
-
-$updateChecker = PucFactory::buildUpdateChecker(
-    'https://github.com/yourusername/your-repo-name/',
+require_once __DIR__ . '/includes/update-checker.php';
+(new \MP\UpdateChecker(
     __FILE__,
-    'your-plugin-slug'
-);
-
-// Optional: For private repo authentication
-$updateChecker->setAuthentication('your-github-token');
-
-// Optional: Set the branch
-$updateChecker->getVcsApi()->setBranch('main');  // or 'master'
+    'https://github.com/MeTaNaNima/marketing-planet-plugin',
+    'marketing-planet-plugin'
+))->init();
 
 
 // Include core includes
