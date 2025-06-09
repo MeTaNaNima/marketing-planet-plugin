@@ -7,9 +7,12 @@ class MP_Security_Headers {
         add_action('admin_menu', [$this, 'register_settings_page']);
         add_action('admin_init', [$this, 'register_settings']);
         add_action('init', [$this, 'apply_headers']);
+        add_action('update_option_marketing_planet_security_headers_method', [$this, 'handle_method_change'], 10, 2);
+        add_action('update_option_marketing_planet_active_modules', [$this, 'handle_module_toggle'], 10, 2);
     }
 
-    public function register_settings_page() {
+    public function register_settings_page(): void
+    {
         add_options_page(
             'Security Headers',
             'Security Headers',
@@ -19,7 +22,8 @@ class MP_Security_Headers {
         );
     }
 
-    public function register_settings() {
+    public function register_settings(): void
+    {
         register_setting('mp_security_headers', self::OPTION_KEY);
         add_settings_section('default', '', null, 'mp-security-headers');
         add_settings_field(
@@ -31,7 +35,8 @@ class MP_Security_Headers {
         );
     }
 
-    public function render_settings_page() {
+    public function render_settings_page(): void
+    {
         ?>
         <div class="wrap">
             <h1>Security Headers Settings</h1>
@@ -46,7 +51,8 @@ class MP_Security_Headers {
         <?php
     }
 
-    public function render_method_field() {
+    public function render_method_field(): void
+    {
         $value = get_option(self::OPTION_KEY, 'htaccess');
         ?>
         <select name="<?php echo esc_attr(self::OPTION_KEY); ?>">
@@ -56,7 +62,8 @@ class MP_Security_Headers {
         <?php
     }
 
-    public function apply_headers() {
+    public function apply_headers(): void
+    {
         $method = get_option(self::OPTION_KEY, 'htaccess');
         if ($method === 'php') {
             $this->add_php_headers();
@@ -65,7 +72,8 @@ class MP_Security_Headers {
         }
     }
 
-    private function add_php_headers() {
+    private function add_php_headers(): void
+    {
         add_action('send_headers', function () {
             header("Access-Control-Allow-Methods: GET,POST");
             header("Access-Control-Allow-Headers: Content-Type, Authorization");
@@ -122,6 +130,38 @@ HTA;
 
         file_put_contents($htaccess_path, $updated);
     }
+
+    public function handle_method_change($old_value, $new_value): void
+    {
+        if ($old_value === 'htaccess' && $new_value === 'php') {
+            $this->remove_htaccess_block();
+        }
+    }
+
+    public function handle_module_toggle($old, $new): void
+    {
+        $was_active = in_array('security-headers', (array) $old);
+        $is_active = in_array('security-headers', (array) $new);
+
+        if ($was_active && !$is_active) {
+            $this->remove_htaccess_block();
+        }
+    }
+
+    private function remove_htaccess_block() {
+        $htaccess_path = ABSPATH . '.htaccess';
+        if (!is_writable($htaccess_path) || !file_exists($htaccess_path)) {
+            return;
+        }
+
+        $content = file_get_contents($htaccess_path);
+        $pattern = "/# BEGIN MP Resolving Security Issues.*?# END MP Resolving Security Issues/s";
+        $new_content = preg_replace($pattern, '', $content);
+        file_put_contents($htaccess_path, trim($new_content) . "\n");
+    }
+
+
+
 }
 
 new MP_Security_Headers();
