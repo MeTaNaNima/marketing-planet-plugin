@@ -29,7 +29,7 @@ class UpdateChecker {
 
         // $updateChecker->setBranch('main');
 //        $updateChecker->getVcsApi()->enableReleaseAssets();
-        $token = get_option('accessi_github_token');
+        $token = get_option('marketing_planet_github_token');
         if (!empty($token)) {
             $updateChecker->setAuthentication($token);
         }
