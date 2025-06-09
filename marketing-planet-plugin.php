@@ -30,6 +30,9 @@ require_once plugin_dir_path(__FILE__) . 'includes/init.php';
 
 // Auto-load only activated modules
 $active_modules = get_option('marketing_planet_active_modules', []);
+if (!is_array($active_modules)) {
+    $active_modules = [];
+}
 $modules_dir = plugin_dir_path(__FILE__) . 'modules/';
 
 foreach ($active_modules as $module) {
