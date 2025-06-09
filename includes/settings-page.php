@@ -180,8 +180,8 @@ function marketing_planet_settings_page(): void
         echo '<table class="form-table">';
         echo '<tr><th scope="row">Header Injection Method</th><td>';
         echo '<select name="marketing_planet_security_headers_method">';
-        echo '<option value="htaccess"' . selected($method, 'htaccess', false) . '>.htaccess (Default)</option>';
-        echo '<option value="php"' . selected($method, 'php', false) . '>PHP (Fallback)</option>';
+        echo '<option value="htaccess"' . selected($method, 'htaccess', false) . '>.htaccess (Fast - Lower Compatibility)</option>';
+        echo '<option value="php"' . selected($method, 'php', false) . '>PHP (Slow - More Compatible)</option>';
         echo '</select>';
         echo '<p class="description">Choose PHP if your server ignores .htaccess or uses NGINX.</p>';
         echo '</td></tr>';

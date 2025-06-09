@@ -94,6 +94,11 @@ class MP_Security_Headers {
     }
 
     private function write_htaccess_headers() {
+        $method = get_option(self::OPTION_KEY, 'htaccess');
+        if ($method !== 'htaccess') {
+            return;
+        }
+
         $htaccess_path = ABSPATH . '.htaccess';
         if (!is_writable($htaccess_path)) {
             return;
