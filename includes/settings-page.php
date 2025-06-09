@@ -272,7 +272,7 @@ function marketing_planet_settings_page(): void
     echo '</td></tr>';
     echo '<tr><th scope="row">Plugin Token</th><td>';
     echo '<input type="password" name="marketing_planet_github_token" value="' . esc_attr($github_token) . '" class="regular-text" style="min-width: 250px;">';
-    echo '<p class="description">Enter your GitHub personal access token to enable plugin updates from private repo.</p>';
+    echo '<p class="description">Enter your GitHub personal access token to enable plugin updates from private repo!</p>';
     echo '</td></tr></table>';
 
     echo '</div>';
