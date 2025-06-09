@@ -93,7 +93,8 @@ function mp_render_color_field_responsive($option_name, $key, $label, $data = []
     $single_value = esc_attr($data['value'] ?? '');
     $display_single = !$is_responsive ? '' : 'style="display:none;"';
     echo "<div class='mp-color-single mp-responsive-{$key}' {$display_single}>";
-    echo "<input type='color' name='{$option_name}[{$key}][value]' value='" . ($single_value ?: '#000000') . "' />";
+    echo "<div class='mp-color-picker' data-input-name='{$option_name}[{$key}][value]' data-initial='" . ($single_value ?: '#000000') . "'></div>";
+    echo "<input type='hidden' name='{$option_name}[{$key}][value]' value='" . ($single_value ?: '#000000') . "' class='mp-color-hidden'>";
     echo " <em>(Leave empty for 'inherit')</em>";
     echo "</div>";
 

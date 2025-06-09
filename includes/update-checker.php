@@ -3,7 +3,6 @@
 namespace MP;
 
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
-use Dotenv\Dotenv;
 
 class UpdateChecker {
     protected string $pluginFile;
@@ -17,13 +16,6 @@ class UpdateChecker {
     }
 
     public function init(): void {
-        // Load .env for GitHub token
-        if (file_exists(dirname($this->pluginFile) . '/.env')) {
-            $dotenv = Dotenv::createImmutable(dirname($this->pluginFile));
-            $dotenv->load();
-            error_log('GITHUB_TOKEN = ' . getenv('GITHUB_TOKEN'));
-        }
-
         $updateChecker = PucFactory::buildUpdateChecker(
             $this->repoUrl,
             $this->pluginFile,
@@ -35,9 +27,12 @@ class UpdateChecker {
         }
         
 
-//        $updateChecker->setBranch('main');
-        $updateChecker->getVcsApi()->enableReleaseAssets();
-
+        // $updateChecker->setBranch('main');
+//        $updateChecker->getVcsApi()->enableReleaseAssets();
+        $token = get_option('accessi_github_token');
+        if (!empty($token)) {
+            $updateChecker->setAuthentication($token);
+        }
 
         // Debug:
         $updateChecker->addResultFilter(function($update) {

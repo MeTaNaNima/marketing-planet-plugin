@@ -2,18 +2,19 @@
     padding: var(--mp-padding);
     margin: var(--mp-margin);
     border-width: var(--mp-border_width);
-    background: var(--mp-background);
+    background-color: var(--mp-background);
     border-color: var(--mp-border_color);
     border-radius: var(--mp-border_radius);
     border-style: solid;
     & .tldr-title {
         font-size: var(--mp-title_size);
+        color: var(--mp-title_color);
         margin-block-start: 0 !important;
         margin-block-end: 0.5rem !important;
+        font-weight: var(--mp-font-weight);
     }
     & p {
         font-size: var(--mp-font_size);
-        font-weight: var(--mp-font-weight);
         color: var(--mp-text_color);
         &:last-child {
             margin-bottom: 0 !important;
@@ -26,15 +27,13 @@
         padding: var(--mp-padding-mobile);
         margin: var(--mp-margin-mobile);
         border-width: var(--mp-border_width-mobile);
-        background: var(--mp-background-mobile);
-        border-color: var(--mp-border_color-mobile);
         border-radius: var(--mp-border_radius-mobile);
         & .tldr-title {
             font-size: var(--mp-title_size-mobile);
+            font-weight: var(--mp-font-weight-mobile);
         }
         & p {
             font-size: var(--mp-font_size-mobile);
-            font-weight: var(--mp-font-weight-mobile);
             color: var(--mp-text_color-mobile);
         }
     }

@@ -25,10 +25,18 @@ add_action('admin_init', function () {
     register_setting('marketing_planet_settings_group', 'marketing_planet_tldr_post_types');
     register_setting('marketing_planet_settings_group', 'marketing_planet_styles_tldr');
     register_setting('marketing_planet_settings_group', 'marketing_planet_tldr_section_title');
+    register_setting('marketing_planet_settings_group', 'marketing_planet_github_token');
     register_setting('marketing_planet_settings_group', 'marketing_planet_faq_post_types');
     register_setting('marketing_planet_settings_group', 'marketing_planet_faq_auto_append');
     register_setting('marketing_planet_settings_group', 'marketing_planet_security_headers_method');
     register_setting('marketing_planet_settings_group', 'sitemap_excluded_post_types');
+
+    add_action('admin_enqueue_scripts', function ($hook) {
+        if ($hook === 'toplevel_page_marketing-planet-settings') {
+            wp_enqueue_script('pickr', 'https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js', [], null, true);
+            wp_enqueue_style('pickr-css', 'https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css'); // or nano, monolith
+        }
+    });
 
 
 
@@ -67,6 +75,7 @@ add_action('admin_init', function () {
 
 function marketing_planet_settings_page(): void
 {
+    $github_token = get_option('marketing_planet_github_token');
     $modules_dir = plugin_dir_path(__DIR__) . 'modules/';
     $module_folders = glob($modules_dir . '*', GLOB_ONLYDIR);
     $active_modules = (array) get_option('marketing_planet_active_modules', []);
@@ -91,6 +100,7 @@ function marketing_planet_settings_page(): void
 
 
     echo '<a href="#" class="nav-tab" data-tab="tab-styles">Add/Edit Styles</a>';
+    echo '<a href="#" class="nav-tab" data-tab="tab-shortcodes">Shortcode Helper</a>';
     echo '<a href="#" class="nav-tab" data-tab="tab-about">About</a>';
     echo '</h2>';
 
@@ -122,7 +132,14 @@ function marketing_planet_settings_page(): void
 
         echo "<tr><th scope='row'>{$label}</th><td><label><input type='checkbox' name='marketing_planet_active_modules[]' value='{$slug}' {$checked} {$disabled}> Enable</label>{$note}</td></tr>";
     }
-    echo '</tbody></table></div>';
+    echo '</tbody></table>';
+
+    echo '<hr>';
+    echo '<pre>';
+    print_r($module_folders);
+    print_r($active_modules);
+    echo '</pre>';
+    echo '</div>';
 
     if (in_array('tldr-field', $active_modules)) {
         echo '<div class="tab-section" id="tab-tldr" style="display:none;">';
@@ -205,10 +222,59 @@ function marketing_planet_settings_page(): void
         echo '</div>';
     }
 
+    echo '<div class="tab-section" id="tab-shortcodes" style="display:none;">';
+    echo '<h2>Shortcode Helper</h2>';
+    echo '<table class="widefat striped">';
+    echo '<thead><tr><th>Shortcode</th><th>Description</th><th>Example</th></tr></thead>';
+    echo '<tbody>';
+
+    // mp_date shortcode
+    if (in_array('mp-date-module', $active_modules)) {
+        // echo to notice
+    }
+    echo '<tr>';
+    echo '<td><code class="mp-copyable-shortcode" title="Click to copy" style="cursor:pointer;">[mp_date]</code></td>';
+    echo '<td>Displays the current date using the default format (Y-m-d).</td>';
+    echo '<td><code>[mp_date]</code> → 2025-06-08</td>';
+    echo '</tr>';
+    echo '<tr>';
+    echo '<td><code class="mp-copyable-shortcode" title="Click to copy" style="cursor:pointer;">[mp_date format="F j, Y"]</code></td>';
+    echo '<td>Displays a custom formatted date.</td>';
+    echo '<td><code>[mp_date format="F j, Y"]</code> → June 8, 2025</td>';
+    echo '</tr>';
+    echo '<tr>';
+    echo '<td><code class="mp-copyable-shortcode" title="Click to copy" style="cursor:pointer;">[mp_date format="H:i" timezone="Europe/Berlin"]</code></td>';
+    echo '<td>Uses a specific timezone for the date output.</td>';
+    echo '<td><code>[mp_date format="H:i" timezone="Europe/Berlin"]</code> → 16:42</td>';
+    echo '</tr>';
+
+    if (in_array('faq-repeater', $active_modules)) {
+        //        echo to notice
+    }
+    // Example for FAQs
+    echo '<tr>';
+    echo '<td><code class="mp-copyable-shortcode" title="Click to copy" style="cursor:pointer;">[mp_faqs]</code></td>';
+    echo '<td>Displays FAQs manually on the page.</td>';
+    echo '<td><code class="mp-copyable-shortcode" title="Click to copy" style="cursor:pointer;">[mp_faqs]</code></td>';
+    echo '</tr>';
+
+    echo '</tbody>';
+    echo '</table>';
+    echo '<span id="mp_shortcode_copy_feedback" style="display:none; color:green; margin-top:10px;">Copied!</span>';
+    echo '</div>';
+
 
     echo '<div class="tab-section" id="tab-about" style="display:none;">';
     echo '<p><strong>Marketing Planet Plugin</strong> is a modular toolset for reusable functionality, SEO, content enhancements, and more — built for performance-oriented WordPress development.</p>';
     echo '<p>Developed by <a href="https://marketingplanet.agency/" target="_blank">Marketing Planet Agency</a></p>';
+
+    echo '<table class="form-table"><tr><th scope="row">Post Types</th><td>';
+    echo '</td></tr>';
+    echo '<tr><th scope="row">Plugin Token</th><td>';
+    echo '<input type="password" name="marketing_planet_github_token" value="' . esc_attr($github_token) . '" class="regular-text" style="min-width: 250px;">';
+    echo '<p class="description">Enter your GitHub personal access token to enable plugin updates from private repo.</p>';
+    echo '</td></tr></table>';
+
     echo '</div>';
 
     submit_button('Save Changes');
@@ -293,6 +359,47 @@ function marketing_planet_settings_page(): void
                         }
                     });
                 }
+                
+                document.querySelectorAll('.mp-color-picker').forEach(el => {
+                    const inputName = el.dataset.inputName;
+                    const initialColor = el.dataset.initial || '#000000';
+                    const hiddenInput = el.nextElementSibling;
+            
+                    const pickr = Pickr.create({
+                        el: el,
+                        theme: 'classic',
+                        default: initialColor,
+                        components: {
+                            preview: true,
+                            opacity: true,
+                            hue: true,
+                            interaction: {
+                                hex: true,
+                                rgba: true,
+                                input: true,
+                                clear: true,
+                                save: true
+                            }
+                        }
+                    });
+            
+                    pickr.on('save', (color) => {
+                        const hex = color.toHEXA().toString();
+                        hiddenInput.value = hex;
+                        pickr.hide();
+                    });
+                });
+                
+                document.querySelectorAll('.mp-copyable-shortcode').forEach(el => {
+                    el.addEventListener('click', () => {
+                        navigator.clipboard.writeText(el.textContent).then(() => {
+                            const feedback = document.getElementById('mp_shortcode_copy_feedback');
+                            feedback.style.display = 'inline';
+                            feedback.textContent = 'Copied!';
+                            setTimeout(() => feedback.style.display = 'none', 1500);
+                        });
+                    });
+                });
             });
             
             // Make copy function globally accessible
