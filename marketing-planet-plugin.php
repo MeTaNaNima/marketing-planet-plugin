@@ -4,7 +4,7 @@
  * Plugin Name: Marketing Planet Plugin
  * Plugin URI: https://marketingplanet.agency/
  * Description: A modular plugin developed by Marketing Planet for reusable, high-performance functionality across multiple sites.
- * Version: 0.0.8
+ * Version: 0.0.9
  * Author: Marketing Planet
  * Author URI: https://marketingplanet.agency/
  * License: GPL2+
