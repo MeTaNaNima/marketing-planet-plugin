@@ -60,7 +60,7 @@ jobs:
                   server: ${{ secrets.FTP_SERVER_YD }}
                   username: ${{ secrets.FTP_USERNAME_YD }}
                   password: ${{ secrets.FTP_PASSWORD_YD }}
-                  protocol: sftp
+                  protocol: ftp
                   port: 27
                   local-dir: ./
                   server-dir: /home/gusjcr51/public_html/wp-content/plugins/marketing-planet-plugin/
