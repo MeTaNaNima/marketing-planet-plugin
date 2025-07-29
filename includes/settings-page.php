@@ -135,10 +135,17 @@ function marketing_planet_settings_page(): void
     echo '</tbody></table>';
 
     echo '<hr>';
+    echo '<button id="debug-info" class="debug-info-button button-secondary">Show Debug Info</button>';
+    echo '<div class="debug-info-container" style="display:none;">';
     echo '<pre>';
+    echo 'All Modules: ';
     print_r($module_folders);
+    echo '</pre>';
+    echo '<pre>';
+    echo 'Active Modules: ';
     print_r($active_modules);
     echo '</pre>';
+    echo '</div>';
     echo '</div>';
 
     if (in_array('tldr-field', $active_modules)) {
@@ -400,6 +407,16 @@ function marketing_planet_settings_page(): void
                         });
                     });
                 });
+
+                // on button .debug-info click prevent default and show/hide debug-info-container
+                document.querySelector('#debug-info').addEventListener('click', (event) => {
+                    event.preventDefault();  // Prevents the default action (e.g., page refresh)
+                    
+                    // Toggle the display of the debug-info-container
+                    const debugContainer = document.querySelector('.debug-info-container');
+                    debugContainer.style.display = debugContainer.style.display === 'none' ? 'block' : 'none';
+                });
+
             });
             
             // Make copy function globally accessible
@@ -417,5 +434,4 @@ function marketing_planet_settings_page(): void
         </script>
     HTML;
     echo '</div>';
-
 }
