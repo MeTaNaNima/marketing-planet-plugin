@@ -9,17 +9,6 @@ jobs:
     deploy:
         runs-on: ubuntu-latest
         environment: production
-        strategy:
-            matrix:
-                site:
-                    - server: ${{ secrets.FTP_SERVER_MPDEV }}
-                      username: ${{ secrets.FTP_USERNAME_MPDEV }}
-                      password: ${{ secrets.FTP_PASSWORD_MPDEV }}
-                      server_dir: 'public_html/dev-test/wp-content/plugins/marketing-planet-plugin/'
-                    - server: ${{ secrets.FTP_SERVER_AM }}
-                      username: ${{ secrets.FTP_USERNAME_AM }}
-                      password: ${{ secrets.FTP_PASSWORD_AM }}
-                      server_dir: 'public_html/wp-content/plugins/marketing-planet-plugin/'
 
         steps:
             - name: Checkout code
@@ -28,10 +17,30 @@ jobs:
             - name: Upload via FTP
               uses: SamKirkland/FTP-Deploy-Action@v4.3.4
               with:
-                  server: ${{ matrix.site.server }}
-                  username: ${{ matrix.site.username }}
-                  password: ${{ matrix.site.password }}
+                  server: ${{ secrets.FTP_SERVER_MPDEV }}
+                  username: ${{ secrets.FTP_USERNAME_MPDEV }}
+                  password: ${{ secrets.FTP_PASSWORD_MPDEV }}
                   protocol: ftp
                   port: 21
                   local-dir: ./
-                  server-dir: ${{ matrix.site.server_dir }}
+                  server-dir: public_html/dev-test/wp-content/plugins/marketing-planet-plugin/
+
+    # Automotivaters
+    deploy_am:
+        runs-on: ubuntu-latest
+        environment: production
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Upload via FTP
+              uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+              with:
+                  server: ${{ secrets.FTP_SERVER_AM }}
+                  username: ${{ secrets.FTP_USERNAME_AM }}
+                  password: ${{ secrets.FTP_PASSWORD_AM }}
+                  protocol: ftp
+                  port: 21
+                  local-dir: ./
+                  server-dir: public_html/wp-content/plugins/marketing-planet-plugin/
