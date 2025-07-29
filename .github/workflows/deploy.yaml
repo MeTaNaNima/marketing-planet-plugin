@@ -44,3 +44,23 @@ jobs:
                   port: 21
                   local-dir: ./
                   server-dir: public_html/wp-content/plugins/marketing-planet-plugin/
+
+    # Yaletown Dental
+    deploy_yd:
+        runs-on: ubuntu-latest
+        environment: production
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Upload via FTP
+              uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+              with:
+                  server: ${{ secrets.FTP_SERVER_YD }}
+                  username: ${{ secrets.FTP_USERNAME_YD }}
+                  password: ${{ secrets.FTP_PASSWORD_YD }}
+                  protocol: sftp
+                  port: 27
+                  local-dir: ./
+                  server-dir: /home/gusjcr51/public_html/wp-content/plugins/marketing-planet-plugin/
