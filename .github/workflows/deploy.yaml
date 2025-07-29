@@ -63,3 +63,22 @@ jobs:
                   port: 21
                   local-dir: ./
                   server-dir: /public_html/wp-content/plugins/marketing-planet-plugin/
+
+    # Burnaby Dentist and Orthodontist
+    deploy_bd:
+        runs-on: ubuntu-latest
+        environment: production
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Upload via FTP
+              uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+              with:
+                  server: ${{ secrets.FTP_SERVER_BD }}
+                  username: ${{ secrets.FTP_USERNAME_BD }}
+                  password: ${{ secrets.FTP_PASSWORD_BD }}
+                  port: 21
+                  local-dir: ./
+                  server-dir: public_html/wp-content/plugins/marketing-planet-plugin/
