@@ -18,7 +18,7 @@ class MP_TLDR_Field {
      */
     public function register_meta_box(): void
     {
-        $post_types = get_option('marketing_planet_tldr_post_types', ['post']);
+        $post_types = (array) get_option('marketing_planet_tldr_post_types', ['post']);
         foreach ($post_types as $type) {
             add_meta_box('tldr_summary', 'TL;DR Summary', [$this, 'render_meta_box'], $type, 'normal', 'high');
         }

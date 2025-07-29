@@ -1,18 +1,17 @@
 <?php
-
 class MP_Security_Headers {
-    const OPTION_KEY = 'mp_security_headers_method';
+    const OPTION_KEY = 'mp_security_headers_method'; // You may keep this if you want to track the method or simply hard-code it to PHP
+    const HTACCESS_WRITTEN_OPTION = 'mp_htaccess_written';  // Option flag can be omitted if not using .htaccess
 
     public function __construct() {
         add_action('admin_menu', [$this, 'register_settings_page']);
         add_action('admin_init', [$this, 'register_settings']);
         add_action('init', [$this, 'apply_headers']);
-        add_action('update_option_marketing_planet_security_headers_method', [$this, 'handle_method_change'], 10, 2);
-        add_action('update_option_marketing_planet_active_modules', [$this, 'handle_module_toggle'], 10, 2);
+        // add_action('update_option_marketing_planet_security_headers_method', [$this, 'handle_method_change'], 10, 2);
+        // add_action('update_option_marketing_planet_active_modules', [$this, 'handle_module_toggle'], 10, 2);
     }
 
-    public function register_settings_page(): void
-    {
+    public function register_settings_page(): void {
         add_options_page(
             'Security Headers',
             'Security Headers',
@@ -22,8 +21,8 @@ class MP_Security_Headers {
         );
     }
 
-    public function register_settings(): void
-    {
+    public function register_settings(): void {
+        // Register the setting, but we no longer need to store the method in options.
         register_setting('mp_security_headers', self::OPTION_KEY);
         add_settings_section('default', '', null, 'mp-security-headers');
         add_settings_field(
@@ -35,8 +34,7 @@ class MP_Security_Headers {
         );
     }
 
-    public function render_settings_page(): void
-    {
+    public function render_settings_page(): void {
         ?>
         <div class="wrap">
             <h1>Security Headers Settings</h1>
@@ -51,29 +49,14 @@ class MP_Security_Headers {
         <?php
     }
 
-    public function render_method_field(): void
-    {
-        $value = get_option(self::OPTION_KEY, 'htaccess');
-        ?>
-        <select name="<?php echo esc_attr(self::OPTION_KEY); ?>">
-            <option value="htaccess" <?php selected($value, 'htaccess'); ?>>.htaccess (Default)</option>
-            <option value="php" <?php selected($value, 'php'); ?>>PHP Fallback</option>
-        </select>
-        <?php
+    public function apply_headers(): void {
+        error_log("MP_Security_Headers: Applying PHP headers method.");
+        $this->add_php_headers();
     }
 
-    public function apply_headers(): void
-    {
-        $method = get_option(self::OPTION_KEY, 'htaccess');
-        if ($method === 'php') {
-            $this->add_php_headers();
-        } else {
-            $this->write_htaccess_headers();
-        }
-    }
+    private function add_php_headers(): void {
+        error_log("MP_Security_Headers: Adding PHP headers.");
 
-    private function add_php_headers(): void
-    {
         add_action('send_headers', function () {
             header("Access-Control-Allow-Methods: GET,POST");
             header("Access-Control-Allow-Headers: Content-Type, Authorization");
@@ -93,80 +76,28 @@ class MP_Security_Headers {
         }, 0);
     }
 
-    private function write_htaccess_headers() {
-        $method = get_option(self::OPTION_KEY, 'htaccess');
-        if ($method !== 'htaccess') {
-            return;
-        }
+    // private function write_htaccess_headers() {
+    //     error_log("MP_Security_Headers: Skipping .htaccess writing, as the method is set to PHP.");
+    //     return;
+    // }
 
-        $htaccess_path = ABSPATH . '.htaccess';
-        if (!is_writable($htaccess_path)) {
-            return;
-        }
+    // public function handle_method_change($old_value, $new_value): void {
+    //     error_log("MP_Security_Headers: Method changed from {$old_value} to {$new_value}.");
+    //     // Block any changes to PHP method. You can update this logic to make sure only PHP remains.
+    //     if ($old_value === 'htaccess' && $new_value === 'php') {
+    //         error_log("MP_Security_Headers: Cannot change from htaccess to php. Keeping PHP method.");
+    //         update_option(self::OPTION_KEY, 'php');
+    //     }
+    // }
 
-        $marker_start = "# BEGIN MP Resolving Security Issues";
-        $marker_end = "# END MP Resolving Security Issues";
-
-        $headers_block = <<<HTA
-{$marker_start}
-<IfModule mod_headers.c>
-Header set Access-Control-Allow-Methods "GET,POST"
-Header set Access-Control-Allow-Headers "Content-Type, Authorization"
-Header set Content-Security-Policy "upgrade-insecure-requests;"
-Header set Cross-Origin-Embedder-Policy "unsafe-none; report-to='default'"
-Header set Cross-Origin-Embedder-Policy-Report-Only "unsafe-none; report-to='default'"
-Header set Cross-Origin-Opener-Policy "unsafe-none"
-Header set Cross-Origin-Opener-Policy-Report-Only "unsafe-none; report-to='default'"
-Header set Cross-Origin-Resource-Policy "cross-origin"
-Header set Permissions-Policy "accelerometer=(), autoplay=(), camera=(), cross-origin-isolated=(), display-capture=(self), encrypted-media=(), fullscreen=*, geolocation=(self), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), payment=*, picture-in-picture=*, publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=*, usb=(), xr-spatial-tracking=(), gamepad=(), serial=()"
-Header set Referrer-Policy "strict-origin-when-cross-origin"
-Header set Strict-Transport-Security "max-age=63072000"
-Header set X-Content-Security-Policy "default-src 'self'; img-src *; media-src * data:;"
-Header set X-Content-Type-Options "nosniff"
-Header set X-Frame-Options "SAMEORIGIN"
-Header set X-Permitted-Cross-Domain-Policies "none"
-</IfModule>
-{$marker_end}
-HTA;
-
-        $original = file_get_contents($htaccess_path);
-        $updated = preg_replace("/{$marker_start}.*?{$marker_end}/s", '', $original); // remove old block
-        $updated = trim($updated) . "\n\n" . $headers_block;
-
-        file_put_contents($htaccess_path, $updated);
-    }
-
-    public function handle_method_change($old_value, $new_value): void
-    {
-        if ($old_value === 'htaccess' && $new_value === 'php') {
-            $this->remove_htaccess_block();
-        }
-    }
-
-    public function handle_module_toggle($old, $new): void
-    {
-        $was_active = in_array('security-headers', (array) $old);
-        $is_active = in_array('security-headers', (array) $new);
-
-        if ($was_active && !$is_active) {
-            $this->remove_htaccess_block();
-        }
-    }
-
-    private function remove_htaccess_block() {
-        $htaccess_path = ABSPATH . '.htaccess';
-        if (!is_writable($htaccess_path) || !file_exists($htaccess_path)) {
-            return;
-        }
-
-        $content = file_get_contents($htaccess_path);
-        $pattern = "/# BEGIN MP Resolving Security Issues.*?# END MP Resolving Security Issues/s";
-        $new_content = preg_replace($pattern, '', $content);
-        file_put_contents($htaccess_path, trim($new_content) . "\n");
-    }
-
-
-
+    // public function handle_module_toggle($old, $new): void {
+    //     $was_active = in_array('security-headers', (array) $old);
+    //     $is_active = in_array('security-headers', (array) $new);
+    //
+    //     if ($was_active && !$is_active) {
+    //         error_log("MP_Security_Headers: Deactivating security headers.");
+    //     }
+    // }
 }
 
 new MP_Security_Headers();

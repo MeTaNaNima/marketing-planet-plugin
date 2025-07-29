@@ -86,7 +86,7 @@ function marketing_planet_settings_page(): void
     $tldr_styles = get_option('marketing_planet_styles_tldr', []);
     $post_types = array_filter(
         get_post_types(['public' => true], 'objects'),
-        fn($type) => !in_array($type->name, ['attachment', 'page', 'e-floating-buttons', 'elementor_library'])
+        fn($type) => !in_array($type->name, ['attachment', 'e-floating-buttons', 'elementor_library'])
     );
 
     echo '<div class="wrap"><h1>Marketing Planet Plugin</h1>';
@@ -95,7 +95,7 @@ function marketing_planet_settings_page(): void
     echo '<a href="#" class="nav-tab nav-tab-active" data-tab="tab-modules">Activate Modules</a>';
     echo '<a href="#" class="nav-tab" data-tab="tab-tldr" style="' . (in_array('tldr-field', $active_modules) ? '' : 'display:none;') . '">TL;DR Settings</a>';
     echo '<a href="#" class="nav-tab" data-tab="tab-faq" style="' . (in_array('faq-repeater', $active_modules) ? '' : 'display:none;') . '">FAQ Settings</a>';
-    echo '<a href="#" class="nav-tab" data-tab="tab-security-headers" style="' . (in_array('security-headers', $active_modules) ? '' : 'display:none;') . '">Security Headers</a>';
+    // echo '<a href="#" class="nav-tab" data-tab="tab-security-headers" style="' . (in_array('security-headers', $active_modules) ? '' : 'display:none;') . '">Security Headers</a>';
     echo '<a href="#" class="nav-tab" data-tab="tab-sitemap-exclude" style="' . (in_array('sitemap-exclude-post-types', $active_modules) ? '' : 'display:none;') . '">Yoast Sitemap Control</a>';
 
 
@@ -173,21 +173,21 @@ function marketing_planet_settings_page(): void
         echo '</td></tr></table></div>';
     }
 
-    if (in_array('security-headers', $active_modules)) {
-        $method = get_option('marketing_planet_security_headers_method', 'htaccess');
-        echo '<div class="tab-section" id="tab-security-headers" style="display:none;">';
-        echo '<h2>Security Headers</h2>';
-        echo '<table class="form-table">';
-        echo '<tr><th scope="row">Header Injection Method</th><td>';
-        echo '<select name="marketing_planet_security_headers_method">';
-        echo '<option value="htaccess"' . selected($method, 'htaccess', false) . '>.htaccess (Fast - Lower Compatibility)</option>';
-        echo '<option value="php"' . selected($method, 'php', false) . '>PHP (Slow - More Compatible)</option>';
-        echo '</select>';
-        echo '<p class="description">Choose PHP if your server ignores .htaccess or uses NGINX.</p>';
-        echo '</td></tr>';
-        echo '</table>';
-        echo '</div>';
-    }
+    // if (in_array('security-headers', $active_modules)) {
+    //     $method = get_option('marketing_planet_security_headers_method', 'htaccess');
+    //     echo '<div class="tab-section" id="tab-security-headers" style="display:none;">';
+    //     echo '<h2>Security Headers</h2>';
+    //     echo '<table class="form-table">';
+    //     echo '<tr><th scope="row">Header Injection Method</th><td>';
+    //     echo '<select name="marketing_planet_security_headers_method">';
+    //     echo '<option value="htaccess"' . selected($method, 'htaccess', false) . '>.htaccess (Fast - Lower Compatibility)</option>';
+    //     echo '<option value="php"' . selected($method, 'php', false) . '>PHP (Slow - More Compatible)</option>';
+    //     echo '</select>';
+    //     echo '<p class="description">Choose PHP if your server ignores .htaccess or uses NGINX.</p>';
+    //     echo '</td></tr>';
+    //     echo '</table>';
+    //     echo '</div>';
+    // }
 
 
     echo '<div class="tab-section" id="tab-styles" style="display:none;">';
@@ -309,14 +309,14 @@ function marketing_planet_settings_page(): void
                 const tldrTab = document.querySelector('[data-tab="tab-tldr"]');
                 const faqTab = document.querySelector('[data-tab="tab-faq"]');
                 const styleTab = document.querySelector('[data-tab="tab-styles"]');
-                const securityHeadersCheckbox = document.querySelector('input[name="marketing_planet_active_modules[]"][value="security-headers"]');
-                const securityHeadersTab = document.querySelector('[data-tab="tab-security-headers"]');
+                // const securityHeadersCheckbox = document.querySelector('input[name="marketing_planet_active_modules[]"][value="security-headers"]');
+                // const securityHeadersTab = document.querySelector('[data-tab="tab-security-headers"]');
                 const sitemapExcludeCheckbox = document.querySelector('input[name="marketing_planet_active_modules[]"][value="sitemap-exclude-post-types"]');
                 const sitemapExcludeTab = document.querySelector('[data-tab="tab-sitemap-exclude"]');
 
                 const tldrTabButton = document.querySelector('[data-tab="tab-tldr"]');
                 const faqTabButton = document.querySelector('[data-tab="tab-faq"]');
-                const securityHeadersTabButton = document.querySelector('[data-tab="tab-security-headers"]');
+                // const securityHeadersTabButton = document.querySelector('[data-tab="tab-security-headers"]');
                 const sitemapExcludeTabButton = document.querySelector('[data-tab="tab-sitemap-exclude"]');
 
                 function toggleTabVisibility() {
@@ -328,10 +328,10 @@ function marketing_planet_settings_page(): void
                         faqTab?.style.setProperty('display', faqCheckbox.checked ? '' : 'none');
                         faqTabButton?.style.setProperty('display', faqCheckbox.checked ? '' : 'none');
                     }
-                    if (securityHeadersCheckbox) {
-                        securityHeadersTab?.style.setProperty('display', securityHeadersCheckbox.checked ? '' : 'none');
-                        securityHeadersTabButton?.style.setProperty('display', securityHeadersCheckbox.checked ? '' : 'none');
-                    }
+                    // if (securityHeadersCheckbox) {
+                    //     securityHeadersTab?.style.setProperty('display', securityHeadersCheckbox.checked ? '' : 'none');
+                    //     securityHeadersTabButton?.style.setProperty('display', securityHeadersCheckbox.checked ? '' : 'none');
+                    // }
                     if (sitemapExcludeCheckbox) {
                         sitemapExcludeTab?.style.setProperty('display', sitemapExcludeCheckbox.checked ? '' : 'none');
                         sitemapExcludeTabButton?.style.setProperty('display', sitemapExcludeCheckbox.checked ? '' : 'none');
@@ -340,7 +340,7 @@ function marketing_planet_settings_page(): void
             
                 tldrCheckbox?.addEventListener('change', toggleTabVisibility);
                 faqCheckbox?.addEventListener('change', toggleTabVisibility);
-                securityHeadersCheckbox?.addEventListener('change', toggleTabVisibility);
+                // securityHeadersCheckbox?.addEventListener('change', toggleTabVisibility);
                 sitemapExcludeCheckbox?.addEventListener('change', toggleTabVisibility);
                 
                 toggleTabVisibility();

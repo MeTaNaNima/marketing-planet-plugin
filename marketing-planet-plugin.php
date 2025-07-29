@@ -4,13 +4,16 @@
  * Plugin Name: Marketing Planet Plugin
  * Plugin URI: https://marketingplanet.agency/
  * Description: A modular plugin developed by Marketing Planet for reusable, high-performance functionality across multiple sites.
- * Version: 0.0.9
+ * Version: 0.1.0
  * Author: Marketing Planet
  * Author URI: https://marketingplanet.agency/
  * License: GPL2+
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: marketing-planet-plugin
  */
+
+// TODO: Schema (Dynamic + Auto + Custom)
+// TODO: Google Reviews
 
 defined('ABSPATH') || exit;
 
