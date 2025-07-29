@@ -1,43 +1,43 @@
 name: Deploy to cPanel
 
 on:
-  push:
-    branches:
-      - main
+    push:
+        branches:
+            - main
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    environment: production
+    deploy:
+        runs-on: ubuntu-latest
+        environment: production
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
 
-      - name: Upload via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftp
-          local-dir: ./
-          server-dir: bitfa.forexbaz.com/wp-content/themes/bitfa/
-          
-  deploy_yd:
-    runs-on: ubuntu-latest
-    environment: production
+            - name: Upload via FTP
+              uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+              with:
+                  server:       ${{ secrets.FTP_SERVER_MPDEV }}
+                  username:     ${{ secrets.FTP_USERNAME_MPDEV }}
+                  password:     ${{ secrets.FTP_PASSWORD_MPDEV }}
+                  protocol:     ftp
+                  local-dir:    ./
+                  server-dir:   public_html/dev-test/wp-content/plugins/marketing-planet-plugin/
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Upload via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftp
-          local-dir: ./
-          server-dir: bitfa.forexbaz.com/wp-content/themes/bitfa/
+#    deploy_yd:
+#        runs-on: ubuntu-latest
+#        environment: production
+#
+#        steps:
+#            - name: Checkout code
+#              uses: actions/checkout@v3
+#
+#            - name: Upload via FTP
+#              uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+#              with:
+#                  server: ${{ secrets.FTP_SERVER }}
+#                  username: ${{ secrets.FTP_USERNAME }}
+#                  password: ${{ secrets.FTP_PASSWORD }}
+#                  protocol: ftp
+#                  local-dir: ./
+#                  server-dir: bitfa.forexbaz.com/wp-content/themes/bitfa/
