@@ -9,6 +9,17 @@ jobs:
     deploy:
         runs-on: ubuntu-latest
         environment: production
+        strategy:
+            matrix:
+                site:
+                    - server: ${{ secrets.FTP_SERVER_MPDEV }}
+                      username: ${{ secrets.FTP_USERNAME_MPDEV }}
+                      password: ${{ secrets.FTP_PASSWORD_MPDEV }}
+                      server_dir: 'public_html/dev-test/wp-content/plugins/marketing-planet-plugin/'
+                    - server: ${{ secrets.FTP_SERVER_AM }}
+                      username: ${{ secrets.FTP_USERNAME_AM }}
+                      password: ${{ secrets.FTP_PASSWORD_AM }}
+                      server_dir: 'public_html/wp-content/plugins/marketing-planet-plugin/'
 
         steps:
             - name: Checkout code
@@ -17,27 +28,10 @@ jobs:
             - name: Upload via FTP
               uses: SamKirkland/FTP-Deploy-Action@v4.3.4
               with:
-                  server: ${{ secrets.FTP_SERVER_MPDEV }}
-                  username: ${{ secrets.FTP_USERNAME_MPDEV }}
-                  password: ${{ secrets.FTP_PASSWORD_MPDEV }}
+                  server: ${{ matrix.site.server }}
+                  username: ${{ matrix.site.username }}
+                  password: ${{ matrix.site.password }}
                   protocol: ftp
                   port: 21
                   local-dir: ./
-                  server-dir: public_html/dev-test/wp-content/plugins/marketing-planet-plugin/
-#    deploy_yd:
-#        runs-on: ubuntu-latest
-#        environment: production
-#
-#        steps:
-#            - name: Checkout code
-#              uses: actions/checkout@v3
-#
-#            - name: Upload via FTP
-#              uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-#              with:
-#                  server: ${{ secrets.FTP_SERVER }}
-#                  username: ${{ secrets.FTP_USERNAME }}
-#                  password: ${{ secrets.FTP_PASSWORD }}
-#                  protocol: ftp
-#                  local-dir: ./
-#                  server-dir: bitfa.forexbaz.com/wp-content/themes/bitfa/
+                  server-dir: ${{ matrix.site.server_dir }}
