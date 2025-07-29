@@ -64,4 +64,3 @@ jobs:
                   port: 27
                   local-dir: ./
                   server-dir: /home/gusjcr51/public_html/wp-content/plugins/marketing-planet-plugin/
-                  git-ftp-args: --insecure
