@@ -21,6 +21,7 @@ jobs:
                   username: ${{ secrets.FTP_USERNAME_MPDEV }}
                   password: ${{ secrets.FTP_PASSWORD_MPDEV }}
                   protocol: ftp
+                  port: 21
                   local-dir: ./
                   server-dir: public_html/dev-test/wp-content/plugins/marketing-planet-plugin/
 #    deploy_yd:
