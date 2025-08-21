@@ -4,7 +4,7 @@
  * Plugin Name: Marketing Planet Plugin
  * Plugin URI: https://marketingplanet.agency/
  * Description: A modular plugin developed by Marketing Planet for reusable, high-performance functionality across multiple sites.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author: Marketing Planet
  * Author URI: https://marketingplanet.agency/
  * License: GPL2+
@@ -51,17 +51,17 @@ if (in_array('faq-repeater', $active_modules)) {
 
 
 add_action('admin_enqueue_scripts', function () {
-    // Only enqueue on the plugin's settings page
-    $screen = get_current_screen();
-    if (strpos($screen->id, 'marketing-planet-settings') !== false) {
-        wp_enqueue_style(
-            'mp-admin-css',
-            plugins_url('assets/css/admin.css', __FILE__),
-            [],
-            filemtime(plugin_dir_path(__FILE__) . 'assets/css/admin.css')
-        );
-    }
+    // Only load in admin area
+    if (!is_admin()) return;
+
+    wp_enqueue_style(
+        'mp-admin-css',
+        plugins_url('assets/css/admin.css', __FILE__),  // Path to CSS file
+        [],  // No dependencies
+        filemtime(plugin_dir_path(__FILE__) . 'assets/css/admin.css')  // Versioning based on file modification time
+    );
 });
+
 
 add_action('wp_enqueue_scripts', function () {
     $upload_dir = wp_upload_dir();
@@ -73,3 +73,32 @@ add_action('wp_enqueue_scripts', function () {
     }
 });
 
+
+
+add_action('admin_init', function () {
+    // Verify nonce for security
+    if (isset($_POST['marketing_planet_nonce']) && !empty($_POST['marketing_planet_nonce'])) {
+        if (!check_admin_referer('marketing_planet_settings', 'marketing_planet_nonce')) {
+            // If nonce is invalid, stop the process and show an error
+            wp_die('Invalid request. Nonce verification failed.');
+        }
+    }
+
+    // If nonce is valid, process your form and add a success message
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Example of your form processing logic
+        // You can add your settings saving here
+
+        // Add success message
+        add_settings_error(
+            'marketing_planet_settings_group', // Settings group
+            'marketing_planet_success', // Message ID
+            'Settings have been saved successfully!', // Message text
+            'updated' // Message type ('updated' class for success)
+        );
+
+        // Optionally, redirect to avoid form resubmission on page reload
+        // wp_redirect(admin_url('admin.php?page=marketing-planet-settings'));
+        // exit;
+    }
+});

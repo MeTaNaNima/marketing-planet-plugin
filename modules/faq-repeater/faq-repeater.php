@@ -1,21 +1,22 @@
 <?php
-namespace MP\Modules\FaqRepeater;
 
+namespace MP\Modules\FaqRepeater;
 
 /** @var TYPE_NAME $GLOBALS */
 $GLOBALS['marketing_planet_module_titles']['faq-repeater'] = 'FAQ Repeater';
 
 defined('ABSPATH') || exit;
 
-
-class FaqRepeaterModule {
-    const OPTION_KEY = 'marketing_planet_faq_post_types';
+class FaqRepeaterModule
+{
+    const OPTION_KEY                 = 'marketing_planet_faq_post_types';
     private bool $faq_shortcode_used = false;
 
     /**
      * Constructor
      */
-    public function __construct() {
+    public function __construct()
+    {
         add_action('add_meta_boxes', [$this, 'register_metabox']);
         add_action('save_post', [$this, 'save_faq_data'], 10, 2); // Ensure we have the post object
         add_action('wp_footer', [$this, 'render_schema'], 99);
@@ -54,32 +55,47 @@ class FaqRepeaterModule {
     public function save_faq_data($post_id, $post): void
     {
         // Skip if autosave, revision, or post type is not enabled
-        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
-        if (wp_is_post_revision($post_id)) return;
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+            return;
+        }
 
-        $post_type = get_post_type($post_id);
+        if (wp_is_post_revision($post_id)) {
+            return;
+        }
+
+        $post_type          = get_post_type($post_id);
         $enabled_post_types = get_option(self::OPTION_KEY, []);
-        if (!in_array($post_type, $enabled_post_types)) return;
+        if (! in_array($post_type, $enabled_post_types)) {
+            return;
+        }
 
         // Check if the post is being saved in the native WordPress editor (Classic or Gutenberg)
-        if (!$this->is_wp_editor_save($post)) {
+        if (! $this->is_wp_editor_save($post)) {
             return; // Skip saving FAQ data if it's not from the native WP editor
         }
 
         // Process FAQ data
-        if (!empty($_POST['faq_repeater'])) {
-            $cleaned = array_values(array_filter($_POST['faq_repeater'], function($item) {
-                return !empty($item['question']) || !empty($item['answer']);
+        if (! empty($_POST['faq_repeater'])) {
+            $cleaned = array_values(array_filter($_POST['faq_repeater'], function ($item) {
+                return ! empty($item['question']) || ! empty($item['answer']);
             }));
 
             // Only update if there's valid FAQ data
-            if (!empty($cleaned)) {
+            if (! empty($cleaned)) {
                 update_post_meta($post_id, '_faq_repeater_data', wp_kses_post_deep($cleaned));
             } else {
                 delete_post_meta($post_id, '_faq_repeater_data'); // Remove if FAQ is empty
             }
         } else {
             delete_post_meta($post_id, '_faq_repeater_data'); // No FAQ data to save, so delete
+        }
+
+        // Save the selected title tag for all FAQs
+        if (isset($_POST['faq_repeater_tag'])) {
+            update_post_meta($post_id, '_faq_repeater_tag', sanitize_text_field($_POST['faq_repeater_tag']));
+        } else {
+            // Default to 'h3' if no selection is made
+            update_post_meta($post_id, '_faq_repeater_tag', 'h3');
         }
     }
 
@@ -102,25 +118,30 @@ class FaqRepeaterModule {
      */
     public function render_schema(): void
     {
-        if (!is_singular()) return;
-        $post_id = get_the_ID();
-        $faqs = get_post_meta($post_id, '_faq_repeater_data', true);
+        if (! is_singular()) {
+            return;
+        }
 
-        if (!$faqs || !is_array($faqs)) return;
+        $post_id = get_the_ID();
+        $faqs    = get_post_meta($post_id, '_faq_repeater_data', true);
+
+        if (! $faqs || ! is_array($faqs)) {
+            return;
+        }
 
         $schema = [
-            '@context' => 'https://schema.org',
-            '@type' => 'FAQPage',
-            'mainEntity' => array_map(function($item) {
+            '@context'   => 'https://schema.org',
+            '@type'      => 'FAQPage',
+            'mainEntity' => array_map(function ($item) {
                 return [
-                    '@type' => 'Question',
-                    'name' => wp_strip_all_tags($item['question']),
+                    '@type'          => 'Question',
+                    'name'           => wp_strip_all_tags($item['question']),
                     'acceptedAnswer' => [
                         '@type' => 'Answer',
-                        'text' => wp_kses_post($item['answer']),
-                    ]
+                        'text'  => wp_kses_post($item['answer']),
+                    ],
                 ];
-            }, $faqs)
+            }, $faqs),
         ];
 
         echo '<script type="application/ld+json">' . wp_json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>';
@@ -129,28 +150,41 @@ class FaqRepeaterModule {
     /**
      * Render Shortcode for FAQ
      */
-    public function render_shortcode($atts): string {
+    public function render_shortcode($atts): string
+    {
         $this->faq_shortcode_used = true;
-        if (!is_singular()) return '';
+        if (! is_singular()) {
+            return '';
+        }
 
         $post_id = get_the_ID();
-        $faqs = get_post_meta($post_id, '_faq_repeater_data', true);
-        if (!$faqs || !is_array($faqs)) return '';
+        $faqs    = get_post_meta($post_id, '_faq_repeater_data', true);
+        if (! $faqs || ! is_array($faqs)) {
+            return '';
+        }
+
+        $title_tag = get_post_meta($post_id, '_faq_repeater_tag', true) ?: 'h3';
+
+        $is_first_active = get_option('marketing_planet_faq_first_active', false);
 
         // Output accordion HTML
         ob_start();
-        ?>
+?>
         <div class="mp-faq-wrapper">
             <?php foreach ($faqs as $index => $item): ?>
                 <div class="mp-faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-                    <button class="mp-faq-question" itemprop="name"><?= esc_html($item['question']) ?></button>
-                    <div class="mp-faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-                        <div itemprop="text"><?= wpautop(wp_kses_post($item['answer'])) ?></div>
+                    <div class="mp-faq-question <?php echo esc_attr($is_first_active && $index === 0 ? 'active' : ''); ?>" itemprop="name">
+                        <<?php echo esc_attr($title_tag); ?> class="mp-faq-question-title" itemprop="name">
+                            <?php echo esc_html($item['question']); ?>
+                        </<?php echo esc_attr($title_tag); ?>>
+                    </div>
+                    <div class="mp-faq-answer" <?php echo esc_attr($is_first_active && $index === 0 ? 'style=max-height:1000px;' : ''); ?> itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                        <div itemprop="text"><?php echo wpautop(wp_kses_post($item['answer'])) ?></div>
                     </div>
                 </div>
             <?php endforeach; ?>
         </div>
-        <?php
+<?php
         return ob_get_clean();
     }
 
@@ -163,7 +197,7 @@ class FaqRepeaterModule {
         $enabled_post_types = get_option(self::OPTION_KEY, []);
 
         // Check if the current post type is in the list of enabled post types
-        if (!is_singular() || !in_array(get_post_type(), $enabled_post_types)) {
+        if (! is_singular() || ! in_array(get_post_type(), $enabled_post_types)) {
             return; // Don't enqueue assets if not in enabled post types
         }
 
@@ -171,7 +205,7 @@ class FaqRepeaterModule {
 
         // if (!$should_enqueue) return;
 
-        $base_url = plugin_dir_url(__FILE__);
+        $base_url  = plugin_dir_url(__FILE__);
         $base_path = plugin_dir_path(__FILE__);
 
         wp_enqueue_style(
@@ -195,11 +229,15 @@ class FaqRepeaterModule {
      */
     public function append_faq_to_content($content): mixed
     {
-        if (!is_singular() || !in_the_loop() || !is_main_query()) return $content;
+        if (! is_singular('post') || ! in_the_loop() || ! is_main_query()) {
+            return $content;
+        }
 
         // Only append if setting is enabled
         $append_enabled = get_option('marketing_planet_faq_auto_append');
-        if (!$append_enabled) return $content;
+        if (! $append_enabled) {
+            return $content;
+        }
 
         $faq_html = $this->render_shortcode([]);
         return $content . $faq_html;

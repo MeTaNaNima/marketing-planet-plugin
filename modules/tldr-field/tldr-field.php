@@ -4,13 +4,14 @@ defined('ABSPATH') || exit;
 /** @var TYPE_NAME $GLOBALS */
 $GLOBALS['marketing_planet_module_titles']['tldr-field'] = 'TL;DR Field (Prepends to First H2 Tag)';
 
-class MP_TLDR_Field {
-    public function __construct() {
+class MP_TLDR_Field
+{
+    public function __construct()
+    {
         add_action('add_meta_boxes', [$this, 'register_meta_box']);
         add_action('save_post', [$this, 'save_meta']);
         add_filter('the_content', [$this, 'inject_tldr']);
         add_action('wp_enqueue_scripts', [$this, 'enqueue_styles']);
-
     }
 
     /**
@@ -84,8 +85,6 @@ class MP_TLDR_Field {
             );
         }
     }
-
-
 }
 
 // Instantiate the class

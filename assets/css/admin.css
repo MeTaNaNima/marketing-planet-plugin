@@ -1,47 +1,56 @@
+:root {
+  --mp-color-light: #736dff;
+  --mp-color-warning: #ffcc00;
+  --mp-color-danger: #ff4d4f;
+}
 
 .text-left {
-    text-align: left !important;
+  text-align: left !important;
 }
 
 .mp-input-container {
-    display: flex;
-    flex-direction: row;
-    gap: 0.5rem;
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
 
-    & .mp-input-container-inner {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        min-height: 30px;
-        text-align: center;
-    }
+  & .mp-input-container-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-height: 30px;
+    text-align: center;
+  }
 }
 
-
+.post-type-wrapper {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+}
 
 .mp-box {
-    display: flex;
-    flex-direction: row;
-    gap: 3rem;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 3rem;
+  align-items: center;
 }
 
 .mp-standard-box {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 
-    & .mp-input-box {
-        display: flex;
-        flex-direction: column-reverse;
-        align-items: center;
-        gap: 0.25rem;
-    }
+  & .mp-input-box {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 0.25rem;
+  }
 }
 
 /* CodeMirror */
 pre.CodeMirror-line {
-    padding-inline-start: 3rem !important;
+  padding-inline-start: 3rem !important;
 }
 /*.CodeMirror-gutter,*/
 /*.CodeMirror-gutters,*/
@@ -50,3 +59,85 @@ pre.CodeMirror-line {
 /*.CodeMirror-sizer {*/
 /*    margin-right: 2rem;*/
 /*}*/
+
+/* FAQ MetaBox */
+div#faq_repeater_box {
+  & .postbox-header {
+    background-color: var(--mp-color-light);
+
+    & h2 {
+      color: #fff;
+      font-size: 1.25rem;
+    }
+  }
+  & .handle-order-higher,
+  & .handle-order-lower,
+  & .handlediv,
+  & .item-edit,
+  & .postbox .handlediv.button-link,
+  & .toggle-indicator {
+    color: #fff;
+  }
+  & table.form-table {
+    & tr {
+      border-bottom: 3px solid #333;
+      counter-increment: question-counter;
+
+      & td {
+        padding-block: 2rem;
+
+        & input[type='text'],
+        & button.remove-faq {
+          margin-top: 1rem;
+        }
+      }
+
+      &:nth-child(odd) {
+        background-color: #eee;
+      }
+      &:nth-child(even) {
+      }
+
+      & button.button.remove-faq {
+        border-color: var(--mp-color-danger);
+        float: right;
+        padding: 0.25rem 2rem;
+        color: var(--mp-color-danger);
+        border-radius: 0.5rem;
+        font-weight: 700;
+      }
+      & .question {
+        position: relative;
+        &::before {
+          content: counter(question-counter);
+          font-weight: bold;
+          background-color: var(--mp-color-light);
+          border-radius: 50%;
+          color: #fff;
+          display: inline-block;
+          width: 1rem;
+          height: 1rem;
+          font-size: 1rem;
+          padding: 0.5rem;
+          text-align: center;
+          margin-inline-end: 0.5rem;
+        }
+      }
+      & div.answer {
+        margin-top: 2.5rem;
+      }
+    }
+  }
+  & .add-button-wrapper {
+    margin-block: 1rem 0.5rem;
+    & button.add-faq {
+      width: 100%;
+      min-height: 2.5rem;
+      background-color: var(--mp-color-light);
+      border-color: var(--mp-color-light);
+      border-radius: 0.5rem;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+  }
+}
